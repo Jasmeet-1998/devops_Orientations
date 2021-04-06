@@ -1,0 +1,86 @@
+# key value pairs.
+# devops standards used underscores.
+# yaml is lot more inspired by python hence indentation to be taken care of.
+# Indentation has major stress in yaml.
+
+projects:
+  project_name: "Chickletsguy"
+  version: &myver 1.0
+  is_public: false
+  features: 20
+  Bugs: 50
+  release_date: 2021-01-01 12:23:44
+  tags:
+    - Gaming
+    - AR/VR
+    - Open World
+  team_members: ["kapil","dhiman","karthik"]
+  team_member_details:
+    - name: "kapil"
+      email: "kapilhejitega@gmail.com"
+      role: "Database Admin"
+    - name: "dhiman"
+      email: "dhimanbro@gmail.com"
+      role : "Cloud Architect"
+    - {name: "karthik", email:"karthikbro@gmail.com", role: "QA Automation Engineer"}
+  short_desc: >
+    here is short
+    description for this project
+  long_desc: |
+    now we can store all indentation
+     and all related
+    things to it
+  processes: *myver
+
+  adv: &advance
+    mykey: myval
+
+  another_adv:
+    one: two
+    <<: *advance
+
+# here both team_members and tags are arrays just two different types to define it the tags appraoch is for non-programmers and the team_members approach is for programmers.
+
+# [{},{},{}] and ["","",""] is commonly used in orchestration in devops where [] represents arrays and {objects}
+# the team_member_details is a array of objects with each object having name,email and role key value pairs.
+# again the first two for kapil and dhiman objects have no difference with the karthik object its just that yaml give multiple syntax for same purpose.
+# > used to store text data note by default yaml will remove the new line and store the short_desc as 1 single line.
+# to restrict the auto removal of indentation and new line we use pipe symbol | and allows us to store the text in the formating given by the devops.
+# Refereing things in YAML
+# in YAML everything can be converted into variable we just have to name it.
+# syntax- &varname value see the version object inside the projects.
+# for reffering the variable we use *varname. note here *varname is not a pointer(see processes)
+# adv has a variable &advance and another_adv has a << (destination point) which is reffering to *advance so all the values of the advance variable will be copied and go  in the another_adv << sectiona and << get replaced.
+
+
+# A Professional YAML file Example
+# for more examples and explaination visit- https://blog.learncodeonline.in/ansible-playbook-implementation-6
+# Basics Done
+---
+- name: Setting up Apache webserver
+  hosts: workers
+  become: true
+  tasks:
+  - name: Install apache packages
+    yum:
+      name: httpd
+      state: present
+
+  - name: copy index.html to web root
+    copy: src=index.html dest=/var/www/html/index.html owner=apache group=apache mode=0644
+
+  - name: ensure httpd service is running
+    service:
+      name: httpd
+      state: started
+
+  - name: Open port 80 for http access
+    firewalld:
+      service: http
+      permanent: true
+      state: enabled
+
+  - name: Restart the firewalld service to load in the firewall changes
+    service:
+      name: firewalld
+      state: restarted
